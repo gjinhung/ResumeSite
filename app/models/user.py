@@ -68,6 +68,14 @@ class Resume(db.Model):
     user = db.relationship("User", back_populates="resumes")
     sections = db.relationship("Section", back_populates="resume")
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
 
 class Section(db.Model):
     __tablename__ = "sections"
@@ -78,7 +86,7 @@ class Section(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(40), nullable=True)
     resume_id = db.Column(
-        db.Integer, db.ForeignKey(add_prefix_for_prod("resumes.id")), nullable=True
+        db.Integer, db.ForeignKey(add_prefix_for_prod("resumes.id")), nullable=False
     )
     created_at = db.Column(db.DateTime(), nullable=False)
     updated_at = db.Column(db.DateTime(), nullable=False)
@@ -90,7 +98,7 @@ class Section(db.Model):
         return {
             "id": self.id,
             "title": self.title,
-            "user_id": self.user_id,
+            "resume_id": self.resume_id,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }
@@ -116,6 +124,7 @@ class Detail(db.Model):
         return {
             "id": self.id,
             "description": self.description,
+            "company_id": self.company_id,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }
@@ -128,16 +137,16 @@ class Company(db.Model):
         __table_args__ = {"schema": SCHEMA}
 
     id = db.Column(db.Integer, primary_key=True)
-    organization = db.Column(db.String(40), nullable=False, unique=True)
-    title = db.Column(db.String(40), nullable=False, unique=True)
+    organization = db.Column(db.String(40), nullable=False, unique=False)
+    title = db.Column(db.String(40), nullable=False, unique=False)
     user_id = db.Column(
         db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False
     )
     section_id = db.Column(
         db.Integer, db.ForeignKey(add_prefix_for_prod("sections.id")), nullable=False
     )
-    start_date = db.Column(db.String(40), nullable=False, unique=True)
-    end_date = db.Column(db.String(40), nullable=False, unique=True)
+    start_date = db.Column(db.String(40), nullable=True)
+    end_date = db.Column(db.String(40), nullable=True)
     created_at = db.Column(db.DateTime(), nullable=False)
     updated_at = db.Column(db.DateTime(), nullable=False)
 
@@ -150,6 +159,8 @@ class Company(db.Model):
             "id": self.id,
             "organization": self.organization,
             "title": self.title,
+            "user_id": self.user_id,
+            "section_id": self.section_id,
             "start_date": self.start_date,
             "end_date": self.end_date,
             "created_at": self.created_at,
