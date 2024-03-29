@@ -63,9 +63,45 @@ def seed_users():
         end_date="May 2014",
     )
 
-    db.session.add(demo)
-    db.session.add(marnie)
-    db.session.add(bobbie)
+    detail1 = Detail(
+        description="Collaborated with two other developers using GitHub to manage code and collaborate on features",
+        company=yelping,
+    )
+
+    detail2 = Detail(
+        description="Created a booking system using SQLAlchemy to set up a relational database to create, delete and update tour specific bookings",
+        company=cityra,
+    )
+
+    detail3 = Detail(
+        description="Used critical thinking skills to troubleshoot and resolve complex issues when installing plumbing pipes and fixtures while both satisfying client's request at a timely manner and complying with New York plumbing code",
+        company=plumbing,
+    )
+
+    detail4 = Detail(
+        description="Create and manage offline budget to actual report for MOCJ’s budget of over $400 million and used projections to help MOCJ predict potential surpluses/deficits to help plan for future programs",
+        company=analyst,
+    )
+
+    db.session.add_all(
+        demo,
+        marnie,
+        bobbie,
+        resume1,
+        projects,
+        experience,
+        education,
+        yelping,
+        cityra,
+        plumbing,
+        aa,
+        analyst,
+        marist,
+        detail1,
+        detail3,
+        detail2,
+        detail4,
+    )
     db.session.commit()
 
 
