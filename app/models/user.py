@@ -53,7 +53,7 @@ class User(db.Model, UserMixin):
 
 
 class Resume(db.Model):
-    __tablename__ = "sections"
+    __tablename__ = "resumes"
 
     if environment == "production":
         __table_args__ = {"schema": SCHEMA}
@@ -138,7 +138,7 @@ class Company(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     organization = db.Column(db.String(40), nullable=False, unique=False)
-    title = db.Column(db.String(40), nullable=False, unique=False)
+    title = db.Column(db.String(40), nullable=False)
     user_id = db.Column(
         db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False
     )
