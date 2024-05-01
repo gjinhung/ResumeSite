@@ -2,6 +2,26 @@ from .db import db, environment, SCHEMA, add_prefix_for_prod
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
+details_tags = db.Table(
+    "details_tags",
+    db.Model.metadata,
+    db.Column(
+        "detail_id",
+        db.Integer,
+        db.ForeignKey(add_prefix_for_prod("details.id")),
+        primary_key=True,
+    ),
+    db.Column(
+        "tag_id",
+        db.Integer,
+        db.ForeignKey(add_prefix_for_prod("tags.id")),
+        primary_key=True,
+    ),
+)
+
+if environment == "production":
+    details_tags.schema = SCHEMA
+
 
 class User(db.Model, UserMixin):
     __tablename__ = "users"
@@ -119,6 +139,7 @@ class Detail(db.Model):
     updated_at = db.Column(db.DateTime(), nullable=False)
 
     company = db.relationship("Company", back_populates="details")
+    details = db.relationship("Detail", back_populates="tags")
 
     def to_dict(self):
         return {
@@ -153,6 +174,33 @@ class Company(db.Model):
     section = db.relationship("Section", back_populates="companies")
     details = db.relationship("Detail", back_populates="company")
     user = db.relationship("User", back_populates="companies")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "organization": self.organization,
+            "title": self.title,
+            "user_id": self.user_id,
+            "section_id": self.section_id,
+            "start_date": self.start_date,
+            "end_date": self.end_date,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
+
+class Tag(db.Model):
+    __tablename__ = "tags"
+
+    if environment == "production":
+        __table_args__ = {"schema": SCHEMA}
+
+    id = db.Column(db.Integer, primary_key=True)
+    tag = db.Column(db.String(40), nullable=False, unique=False)
+    created_at = db.Column(db.DateTime(), nullable=False)
+    updated_at = db.Column(db.DateTime(), nullable=False)
+
+    details = db.relationship("Detail", back_populates="tags")
 
     def to_dict(self):
         return {
