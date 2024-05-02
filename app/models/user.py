@@ -44,6 +44,7 @@ class User(db.Model, UserMixin):
 
     resumes = db.relationship("Resume", back_populates="user")
     companies = db.relationship("Company", back_populates="user")
+    tags = db.relationship("Company", back_populates="user")
 
     @property
     def password(self):
@@ -197,20 +198,20 @@ class Tag(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     tag = db.Column(db.String(40), nullable=False, unique=False)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False
+    )
     created_at = db.Column(db.DateTime(), nullable=False)
     updated_at = db.Column(db.DateTime(), nullable=False)
 
     details = db.relationship("Detail", back_populates="tags")
+    user = db.relationship("User", back_populates="tags")
 
     def to_dict(self):
         return {
             "id": self.id,
-            "organization": self.organization,
-            "title": self.title,
+            "tag": self.tag,
             "user_id": self.user_id,
-            "section_id": self.section_id,
-            "start_date": self.start_date,
-            "end_date": self.end_date,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }
