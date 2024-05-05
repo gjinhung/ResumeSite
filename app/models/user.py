@@ -44,7 +44,7 @@ class User(db.Model, UserMixin):
 
     resumes = db.relationship("Resume", back_populates="user")
     companies = db.relationship("Company", back_populates="user")
-    tags = db.relationship("Company", back_populates="user")
+    tags = db.relationship("Tag", back_populates="user")
 
     @property
     def password(self):
@@ -94,6 +94,7 @@ class Resume(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id,
+            "title": self.title,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }
@@ -141,7 +142,7 @@ class Detail(db.Model):
     updated_at = db.Column(db.DateTime(), nullable=False)
 
     company = db.relationship("Company", back_populates="details")
-    tags = db.relationship("Tag", back_populates="details")
+    tags = db.relationship("Tag", secondary=details_tags, back_populates="details")
 
     def to_dict(self):
         return {
@@ -205,8 +206,8 @@ class Tag(db.Model):
     created_at = db.Column(db.DateTime(), nullable=False)
     updated_at = db.Column(db.DateTime(), nullable=False)
 
-    details = db.relationship("Detail", back_populates="tags")
     user = db.relationship("User", back_populates="tags")
+    details = db.relationship("Detail", secondary=details_tags, back_populates="tags")
 
     def to_dict(self):
         return {
