@@ -47,6 +47,7 @@ def seed_users():
 
     resume1 = Resume(
         user_id=1,
+        name="Resume 1",
         created_at=datetime.datetime.now(),
         updated_at=datetime.datetime.now(),
     )

@@ -83,6 +83,7 @@ class Resume(db.Model):
     user_id = db.Column(
         db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False
     )
+    title = db.Column(db.String(40), nullable=False)
     created_at = db.Column(db.DateTime(), nullable=False)
     updated_at = db.Column(db.DateTime(), nullable=False)
 

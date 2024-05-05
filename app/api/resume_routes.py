@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from ..models import db, Resume
+from ..models import db, Resume, Section
 from flask_login import login_required, current_user
 from ..forms.resume_form import ResumeForm
 import datetime
@@ -16,9 +16,11 @@ def get_user_resumes():
         for resume in resumes:
             resume_dict = resume.to_dict()
             sections = resume.sections
-            sections_list = []
+            sections_list = {}
             for section in sections:
-                
+                section_id = section.id
+                sections = Section.query.get_or_404(section_id)
+
     else:
         return jsonify({"errors": "Language is currently unavailable"}), 404
     for language in languages:
