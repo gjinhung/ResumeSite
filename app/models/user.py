@@ -121,8 +121,8 @@ class Section(db.Model):
             "id": self.id,
             "title": self.title,
             "resume_id": self.resume_id,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
+            # "created_at": self.created_at,
+            # "updated_at": self.updated_at,
         }
 
 
@@ -141,15 +141,15 @@ class Detail(db.Model):
     updated_at = db.Column(db.DateTime(), nullable=False)
 
     company = db.relationship("Company", back_populates="details")
-    details = db.relationship("Detail", back_populates="tags")
+    tags = db.relationship("Tag", back_populates="details")
 
     def to_dict(self):
         return {
             "id": self.id,
             "description": self.description,
             "company_id": self.company_id,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
+            # "created_at": self.created_at,
+            # "updated_at": self.updated_at,
         }
 
 
@@ -186,8 +186,8 @@ class Company(db.Model):
             "section_id": self.section_id,
             "start_date": self.start_date,
             "end_date": self.end_date,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
+            # "created_at": self.created_at,
+            # "updated_at": self.updated_at,
         }
 
 
@@ -213,6 +213,6 @@ class Tag(db.Model):
             "id": self.id,
             "tag": self.tag,
             "user_id": self.user_id,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
+            # "created_at": self.created_at,
+            # "updated_at": self.updated_at,
         }
