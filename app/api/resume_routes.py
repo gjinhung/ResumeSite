@@ -8,26 +8,31 @@ resume_routes = Blueprint("resumes", __name__)
 
 
 @resume_routes.route("/")
+@login_required
 def get_user_resumes():
     resumes_list = []
     resumes = Resume.query.filter_by(user_id=current_user.id)
 
     if resumes:
         for resume in resumes:
-            resume_dict = resume.to_dict()
+            resume_dict = {}
+            resume_dict["id"] = resume.id
             sections = resume.sections
             sections_list = []
             for section in sections:
                 section_id = section.id
-                sect_dict = section.to_dict()
+                sect_dict = {}
+                sect_dict["id"] = section.id
                 companies = Company.query.filter_by(section_id=section_id)
                 companies_list = []
                 for company in companies:
-                    company_dict = company.to_dict()
+                    company_dict = {}
+                    company_dict["id"] = company.id
                     details = Detail.query.filter_by(company_id=company.id)
                     details_list = []
                     for detail in details:
-                        detail_dict = detail.to_dict()
+                        detail_dict = {}
+                        detail_dict["id"] = detail.id
                         tags = detail.tags
                         detail_dict["Tags"] = tags
                         details_list.append(detail_dict)
@@ -40,7 +45,7 @@ def get_user_resumes():
     else:
         return jsonify({"errors": "Resume is currently unavailable"}), 404
 
-    return {"resumes": {resumes["title"]: resumes for resumes in resumes_list}}
+    return {"resumes": {resumes["id"]: resumes for resumes in resumes_list}}
 
 
 # @language_routes.route("/<int:id>")
