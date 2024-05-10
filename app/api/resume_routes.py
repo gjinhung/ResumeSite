@@ -48,49 +48,80 @@ def get_user_resumes():
     return {"resumes": {resumes["id"]: resumes for resumes in resumes_list}}
 
 
-# @language_routes.route("/<int:id>")
-# def get_one_language(id):
-#     language = Language.query.get(id)
+@resume_routes.route("/<int:id>")
+def get_one_resume(id):
+    resume = Resume.query.get(id)
+    if resume:
+        resume_dict = {}
+        resume_dict["id"] = resume.id
+        sections = resume.sections
+        sections_list = []
+        for section in sections:
+            section_id = section.id
+            sect_dict = {}
+            sect_dict["id"] = section.id
+            companies = Company.query.filter_by(section_id=section_id)
+            companies_list = []
+            for company in companies:
+                company_dict = {}
+                company_dict["id"] = company.id
+                details = Detail.query.filter_by(company_id=company.id)
+                details_list = []
+                for detail in details:
+                    detail_dict = {}
+                    detail_dict["id"] = detail.id
+                    tags = detail.tags
+                    detail_dict["Tags"] = tags
+                    details_list.append(detail_dict)
+                company_dict["Details"] = details_list
+                companies_list.append(company_dict)
+            sect_dict["Companies"] = companies_list
+            sections_list.append(sect_dict)
+        resume_dict["Sections"] = sections_list
+    else:
+        return jsonify({"errors": "Resume is currently unavailable"}), 404
 
-#     if not language:
-#         return jsonify({"errors": "Language not found"}), 404
-
-#     language_dict = language.to_dict()
-#     guides = language.guides
-#     guides_list = []
-#     for guide in guides:
-#         g_dic = guide.to_dict()
-#     guides_list.append(g_dic["id"])
-#     language_dict["guides_id"] = guides_list
-
-#     return {language_dict["id"]: language_dict}
+    return {resume_dict["id"]: resume_dict}
 
 
-# @language_routes.route("/new", methods=["POST"])
-# @login_required
-# def new_language():
-#     form = LanguageForm()
-#     form["csrf_token"].data = request.cookies["csrf_token"]
+@resume_routes.route("/new", methods=["POST"])
+@login_required
+def new_resume():
+    form = ResumeForm()
 
-#     if form.validate_on_submit():
-#         language = Language(
-#             language=form.language.data,
-#             created_at=datetime.datetime.utcnow(),
-#             updated_at=datetime.datetime.utcnow(),
-#         )
+    form["csrf_token"].data = request.cookies["csrf_token"]
 
-#         db.session.add(language)
-#         db.session.commit()
+    if form.validate_on_submit():
+        if not form.title.data:
+            untitledResume = Resume.query.filter_by(title="Resume").count()
+            if not untitledResume:
+                form.title.data = "Resume"
+            else:
+                resumeNum = 1
+                untitledResume = Resume.query.filter_by(
+                    title=f"Resume {resumeNum}"
+                ).count()
+                while untitledResume:
+                    print(f"resumeNum = {resumeNum}")
+                    resumeNum = resumeNum + 1
+                    untitledResume = Resume.query.filter_by(
+                        title=f"Resume {resumeNum}"
+                    ).count()
 
-#         language_dict = language.to_dict()
+                form.title.data = f"Resume {resumeNum}"
 
-#         guides = language.guides
-#         guides_list = []
-#         for guide in guides:
-#             g_dic = guide.id
-#         guides_list.append(g_dic)
-#         language_dict["guides_id"] = guides_list
+        resume = Resume(
+            user_id=current_user.id,
+            title=form.title.data,
+            created_at=datetime.datetime.utcnow(),
+            updated_at=datetime.datetime.utcnow(),
+        )
 
-#         return language_dict
-#     else:
-#         return {"errors": "error in post a new language"}
+        db.session.add(resume)
+        db.session.commit()
+
+        resume_dict = resume.to_dict()
+
+        return resume_dict
+    else:
+        return {"errors": "error in post a new Resume"}
