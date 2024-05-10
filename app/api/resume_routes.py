@@ -125,3 +125,32 @@ def new_resume():
         return resume_dict
     else:
         return {"errors": "error in post a new Resume"}
+
+
+@resume_routes.route("/<int:id>/", methods=["DELETE"])
+@login_required
+def delete_resume(id):
+    resume = Resume.query.get(id)
+
+    if not resume:
+        return jsonify({"errors": "Review not found"}), 404
+
+    try:
+        db.session.delete(resume)
+        db.session.commit()
+
+        response = {"message": "Resume successfully deleted."}
+
+        return jsonify(response)
+
+    except Exception as e:
+        db.session.rollback()
+        return (
+            jsonify(
+                {
+                    "errors": "An error occurred while deleting the Resume",
+                    "message": str(e),
+                }
+            ),
+            500,
+        )
