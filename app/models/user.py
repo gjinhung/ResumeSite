@@ -43,6 +43,7 @@ class User(db.Model, UserMixin):
     updated_at = db.Column(db.DateTime(), nullable=False)
 
     resumes = db.relationship("Resume", back_populates="user")
+    sections = db.relationship("Section", back_populates="user")
     companies = db.relationship("Company", back_populates="user")
     tags = db.relationship("Tag", back_populates="user")
 
@@ -108,18 +109,23 @@ class Section(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(40), nullable=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False
+    )
     resume_id = db.Column(
         db.Integer, db.ForeignKey(add_prefix_for_prod("resumes.id")), nullable=False
     )
     created_at = db.Column(db.DateTime(), nullable=False)
     updated_at = db.Column(db.DateTime(), nullable=False)
 
+    user = db.relationship("User", back_populates="sections")
     resume = db.relationship("Resume", back_populates="sections")
     companies = db.relationship("Company", back_populates="section")
 
     def to_dict(self):
         return {
             "id": self.id,
+            "user_id": self.user_id,
             "title": self.title,
             "resume_id": self.resume_id,
             # "created_at": self.created_at,
