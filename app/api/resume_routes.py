@@ -161,8 +161,8 @@ def edit_resume(id):
                 return {"errors": f"{form.title.data} already exist"}
             else:
                 resume.title = form.title.data
-                resume.updated_at = datetime.datetime.utcnow()
 
+        resume.updated_at = datetime.datetime.utcnow()
         db.session.commit()
 
         return resume.to_dict()
