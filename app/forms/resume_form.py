@@ -5,6 +5,6 @@ from app.models import User
 
 
 class ResumeForm(FlaskForm):
-    user_id = IntegerField("tour_id")
+    user_id = IntegerField("user_id")
     title = StringField("title")
     submit = SubmitField("Submit")

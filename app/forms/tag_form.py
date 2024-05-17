@@ -6,4 +6,5 @@ from app.models import User
 
 class TagForm(FlaskForm):
     tag = StringField("tag")
+    user_id = IntegerField("user_id")
     submit = SubmitField("Submit")

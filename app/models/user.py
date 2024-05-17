@@ -45,6 +45,7 @@ class User(db.Model, UserMixin):
     resumes = db.relationship("Resume", back_populates="user")
     sections = db.relationship("Section", back_populates="user")
     companies = db.relationship("Company", back_populates="user")
+    details = db.relationship("Detail", back_populates="user")
     tags = db.relationship("Tag", back_populates="user")
 
     @property
@@ -140,6 +141,9 @@ class Detail(db.Model):
         __table_args__ = {"schema": SCHEMA}
 
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False
+    )
     description = db.Column(db.String(40), nullable=False, unique=True)
     company_id = db.Column(
         db.Integer, db.ForeignKey(add_prefix_for_prod("companies.id")), nullable=False
@@ -147,12 +151,14 @@ class Detail(db.Model):
     created_at = db.Column(db.DateTime(), nullable=False)
     updated_at = db.Column(db.DateTime(), nullable=False)
 
+    user = db.relationship("User", back_populates="details")
     company = db.relationship("Company", back_populates="details")
     tags = db.relationship("Tag", secondary=details_tags, back_populates="details")
 
     def to_dict(self):
         return {
             "id": self.id,
+            "user_id": self.user_id,
             "description": self.description,
             "company_id": self.company_id,
             # "created_at": self.created_at,

@@ -176,7 +176,7 @@ def delete_resume(id):
     resume = Resume.query.get(id)
 
     if not resume:
-        return jsonify({"errors": "Review not found"}), 404
+        return jsonify({"errors": "Resume not found"}), 404
 
     try:
         db.session.delete(resume)
