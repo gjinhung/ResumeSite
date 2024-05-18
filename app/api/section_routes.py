@@ -17,8 +17,7 @@ def get_user_sections():
     if sections:
         for section in sections:
             section_id = section.id
-            sect_dict = {}
-            sect_dict["id"] = section.id
+            sect_dict = section.dict()
             companies = Company.query.filter_by(section_id=section_id)
             companies_list = []
             for company in companies:
@@ -48,7 +47,6 @@ def get_one_section(id):
     if section:
         section_id = section.id
         sect_dict = section.to_dict()
-        sect_dict["id"] = section.id
         companies = Company.query.filter_by(section_id=section_id)
         companies_list = []
         for company in companies:
@@ -109,7 +107,7 @@ def edit_section(id):
 
     if form.validate_on_submit():
         form.title.data = form.title.data.strip()
-
+        section.title = form.title.data
         section.updated_at = datetime.datetime.utcnow()
         db.session.commit()
 
