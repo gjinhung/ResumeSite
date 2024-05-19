@@ -53,18 +53,21 @@ def seed_users():
     )
 
     projects = Section(
+        user_id=1,
         title="Projects",
         resume=resume1,
         created_at=datetime.datetime.now(),
         updated_at=datetime.datetime.now(),
     )
     experience = Section(
+        user_id=1,
         title="Experience",
         resume=resume1,
         created_at=datetime.datetime.now(),
         updated_at=datetime.datetime.now(),
     )
     education = Section(
+        user_id=1,
         title="Education",
         resume=resume1,
         created_at=datetime.datetime.now(),
@@ -133,6 +136,7 @@ def seed_users():
     )
 
     detail1 = Detail(
+        user_id=1,
         description="Collaborated with two other developers using GitHub to manage code and collaborate on features",
         company=yelping,
         created_at=datetime.datetime.now(),
@@ -140,6 +144,7 @@ def seed_users():
     )
 
     detail2 = Detail(
+        user_id=1,
         description="Created a booking system using SQLAlchemy to set up a relational database to create, delete and update tour specific bookings",
         company=cityra,
         created_at=datetime.datetime.now(),
@@ -147,6 +152,7 @@ def seed_users():
     )
 
     detail3 = Detail(
+        user_id=1,
         description="Used critical thinking skills to troubleshoot and resolve complex issues when installing plumbing pipes and fixtures while both satisfying client's request at a timely manner and complying with New York plumbing code",
         company=plumbing,
         created_at=datetime.datetime.now(),
@@ -154,6 +160,7 @@ def seed_users():
     )
 
     detail4 = Detail(
+        user_id=1,
         description="Create and manage offline budget to actual report for MOCJ’s budget of over $400 million and used projections to help MOCJ predict potential surpluses/deficits to help plan for future programs",
         company=analyst,
         created_at=datetime.datetime.now(),
