@@ -52,67 +52,76 @@ def get_one_company(id):
         return jsonify({"errors": "Section is currently unavailable"}), 404
 
 
-@section_routes.route("/new", methods=["POST"])
+@company_routes.route("/new", methods=["POST"])
 @login_required
-def new_section():
-    form = SectionForm()
+def new_company():
+    form = CompanyForm()
 
     form["csrf_token"].data = request.cookies["csrf_token"]
 
     if form.validate_on_submit():
         form.title.data = form.title.data.strip()
+        form.organization.data = form.organization.data.strip()
 
-        section = Section(
+        company = Company(
             user_id=current_user.id,
+            organization=form.organization.data,
             title=form.title.data,
-            resume_id=form.resume_id.data,
+            section_id=form.section_id.data,
+            start_date=form.start_date.data,
+            end_date=form.end_date.data,
             created_at=datetime.datetime.utcnow(),
             updated_at=datetime.datetime.utcnow(),
         )
 
-        db.session.add(section)
+        db.session.add(company)
         db.session.commit()
 
-        section_dict = section.to_dict()
+        company_dict = company.to_dict()
 
-        return section_dict
+        return company_dict
     else:
-        return {"errors": "error in post a new Section"}
+        return {"errors": "error in post a new Company"}
 
 
-@section_routes.route("/<int:id>", methods=["PUT"])
+@company_routes.route("/<int:id>", methods=["PUT"])
 @login_required
-def edit_section(id):
-    form = SectionForm()
+def edit_company(id):
+    form = CompanyForm()
     form["csrf_token"].data = request.cookies["csrf_token"]
-    section = Section.query.get(id)
-    if current_user.id != section.user_id:
-        return jsonify({"errors": "Unauthorized to edit this Section"}), 403
+    company = Company.query.get(id)
+    if current_user.id != company.user_id:
+        return jsonify({"errors": "Unauthorized to edit this Company"}), 403
 
     if form.validate_on_submit():
         form.title.data = form.title.data.strip()
-        section.title = form.title.data
-        section.updated_at = datetime.datetime.utcnow()
+        form.organization.data = form.organization.data.strip()
+        company.organization = form.organization.data
+        company.title = form.title.data
+        company.section_id = form.section_id.data
+        company.start_date = form.start_date.data
+        company.end_date = form.end_date.data
+        company.updated_at = datetime.datetime.utcnow()
         db.session.commit()
 
-        return section.to_dict()
+        return company.to_dict()
     else:
         return {"errors": validation_errors_to_error_messages(form.errors)}
 
 
-@section_routes.route("/<int:id>/", methods=["DELETE"])
+@company_routes.route("/<int:id>/", methods=["DELETE"])
 @login_required
-def delete_section(id):
-    section = Section.query.get(id)
+def delete_company(id):
+    company = Company.query.get(id)
 
-    if not section:
-        return jsonify({"errors": "Section not found"}), 404
+    if not company:
+        return jsonify({"errors": "Company not found"}), 404
 
     try:
-        db.session.delete(section)
+        db.session.delete(company)
         db.session.commit()
 
-        response = {"message": "Section successfully deleted."}
+        response = {"message": "Company successfully deleted."}
 
         return jsonify(response)
 
@@ -121,7 +130,7 @@ def delete_section(id):
         return (
             jsonify(
                 {
-                    "errors": "An error occurred while deleting this Section",
+                    "errors": "An error occurred while deleting this Company",
                     "message": str(e),
                 }
             ),
