@@ -33,29 +33,21 @@ def get_user_company():
     return {"companies": {company["id"]: company for company in companies_list}}
 
 
-@section_routes.route("/<int:id>")
-def get_one_section(id):
-    section = Section.query.get(id)
-    if section:
-        section_id = section.id
-        sect_dict = section.to_dict()
-        companies = Company.query.filter_by(section_id=section_id)
-        companies_list = []
-        for company in companies:
-            company_dict = company.to_dict()
-            company_dict["id"] = company.id
-            details = Detail.query.filter_by(company_id=company.id)
-            details_list = []
-            for detail in details:
-                detail_dict = detail.to_dict()
-                detail_dict["id"] = detail.id
-                tags = detail.tags
-                detail_dict["Tags"] = tags
-                details_list.append(detail_dict)
-            company_dict["Details"] = details_list
-            companies_list.append(company_dict)
-        sect_dict["Companies"] = companies_list
-        return {sect_dict["id"]: sect_dict}
+@company_routes.route("/<int:id>")
+def get_one_company(id):
+    company = Company.query.get(id)
+    if company:
+        company_dict = company.to_dict()
+        details = Detail.query.filter_by(company_id=company.id)
+        details_list = []
+        for detail in details:
+            detail_dict = detail.to_dict()
+            detail_dict["id"] = detail.id
+            tags = detail.tags
+            detail_dict["Tags"] = tags
+            details_list.append(detail_dict)
+        company_dict["Details"] = details_list
+        return {company_dict["id"]: company_dict}
     else:
         return jsonify({"errors": "Section is currently unavailable"}), 404
 
